@@ -1,0 +1,121 @@
+// GUARDAR CAMBIOS PERMANENTEMENTE
+public Preferences prefs;
+
+//VIEWPORTS
+public Viewport viewport;
+public Viewport stageViewport;
+stageViewport = new StretchViewport(MainGame.width,MainGame.heigth);
+
+// CAMARA
+public OrthographicCamera cam;
+cam = new OrthographicCamera();
+
+// Le pasamos al viewport la cámara que es lo que se verá en nuestro mundo
+viewport = new StretchViewport(MainGame.width/MainGame.PPM, MainGame.heigth/MainGame.PPM, cam);
+
+// SpriteBatch
+public SpriteBatch batch;
+
+//Scene2d
+public Stage stage;
+stage = new Stage(stageViewport,batch);
+
+// Trabajar con Tiles
+public TiledMap map;
+public TmxMapLoader maploader;
+
+maploader = new TmxMapLoader();
+map = maploader.load("Tiles/level1.tmx");
+public OrthogonalTiledMapRenderer renderer;
+renderer = new OrthogonalTiledMapRenderer(map, 1 / MainGame.PPM);
+
+
+
+// En el método resize para que se actualize nuestro viewport
+@Override
+	public void resize(int width, int height) {
+		viewport.update(width, height, false);
+		cam.update();
+	}
+
+
+//Boton Scene2d
+
+Drawable repetirDrawable = new TextureRegionDrawable(new TextureRegion(new Texture("repetir.png")));
+ImageButton repetir = new ImageButton(repetirDrawable);
+ repetir.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+
+        });
+// SONIDO Y MUSICA
+
+Music music = music = Gdx.audio.newMusic(Gdx.files.internal("song.mp3"));
+Sound sound = Gdx.audio.newSound(Gdx.files.internal("crash.wav"));
+
+
+// BOX2d
+
+World world = new World(new Vector2(0, -10), true);
+Box2DDebugRenderer b2dr = new Box2DDebugRenderer();
+
+
+//Generate World From Tiles
+
+for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
+
+}
+
+//Fuente y letras
+
+// Primero usamos Hiero para convertir a fnt
+
+Label maxScore= new Label( "", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("fuente.fnt")), Color.RED));
+
+
+// Animaciones
+
+Animation<TextureRegion> walk;
+walk = new Animation<TextureRegion>(1 / 6f, atlas.findRegions("walk"), Animation.PlayMode.LOOP);
+
+
+// Define Body Box2d
+
+public void defineBody(World world) {
+
+		dead = false;
+		BodyDef bdef = new BodyDef();
+		bdef.position.set(x / MainGame.PPM, y/ MainGame.PPM);
+		bdef.type = BodyDef.BodyType.DynamicBody;
+		body = world.createBody(bdef);
+
+		FixtureDef fdef = new FixtureDef();
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(2.5f / MainGame.PPM, 5 / MainGame.PPM);
+		fdef.shape = shape;
+		fdef.filter.categoryBits = MainGame.BODY_BIT;
+		fdef.filter.maskBits = (short) (MainGame.ENEMY_BIT | MainGame.JUMPOVER_BIT | MainGame.GROUND_BIT);
+		fdef.friction = 0;
+		body.createFixture(fdef).setUserData(this);
+
+		// sensor
+    PolygonShape shapeFoot = new PolygonShape();
+		shapeFoot.setAsBox(1.5f / MainGame.PPM, 3 / MainGame.PPM, new Vector2(0, -6 / MainGame.PPM), 0);
+		fdef.shape = shapeFoot;
+		fdef.filter.categoryBits = MainGame.FOOT_BIT;
+		fdef.filter.maskBits = (short) (MainGame.JUMPOVER_BIT | MainGame.GROUND_BIT | MainGame.ENEMY_BIT);
+		fdef.isSensor = true;
+		body.createFixture(fdef).setUserData(this);
+
+		// sensor
+		CircleShape circleShape = new CircleShape();
+		circleShape.setRadius(4/MainGame.PPM);
+		circleShape.setPosition(new Vector2(0,3/MainGame.PPM));
+		fdef.shape = circleShape;
+		fdef.filter.categoryBits = MainGame.ODYLE_BIT;
+		fdef.filter.maskBits = (short) (MainGame.COIN_BIT|MainGame.BARREL_BIT | MainGame.ENEMY_BIT | MainGame.GROUND_BIT
+				| MainGame.SPIKES_BIT|MainGame.LEVEL_END|MainGame.CREC_BIT);
+		fdef.isSensor = true;
+		body.createFixture(fdef).setUserData(this);
+
+	}
+
