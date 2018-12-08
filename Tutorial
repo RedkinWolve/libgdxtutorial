@@ -16,6 +16,15 @@ viewport = new StretchViewport(MainGame.width/MainGame.PPM, MainGame.heigth/Main
 // SpriteBatch
 public SpriteBatch batch;
 
+ @Override
+    public void draw() {
+        batch.setProjectionMatrix(cam.combined);
+	batch.begin();
+	batch.end();
+        renderer.render();
+
+    }
+
 //Scene2d
 public Stage stage;
 stage = new Stage(stageViewport,batch);
