@@ -63,6 +63,17 @@ Box2DDebugRenderer b2dr = new Box2DDebugRenderer();
 
 for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
 
+	Rectangle rect = ((RectangleMapObject) object).getRectangle();
+			bdef.type = BodyDef.BodyType.StaticBody;
+			bdef.position.set((rect.getX() + rect.getWidth() / 2) / PPM, (rect.getY() + rect.getHeight() / 2) / PPM);
+
+			Body body = world.createBody(bdef);
+
+			shape.setAsBox(rect.getWidth() / 2 / PPM, rect.getHeight() / 2 / PPM);
+			fdef.shape = shape;
+			fdef.filter.categoryBits = MainGame.GROUND_BIT;
+			body.createFixture(fdef).setUserData(rect);
+
 }
 
 //Fuente y letras
