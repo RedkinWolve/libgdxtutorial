@@ -59,6 +59,9 @@ World world = new World(new Vector2(0, -10), true);
 Box2DDebugRenderer b2dr = new Box2DDebugRenderer();
 
 
+ player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+
+
 //Generate World From Tiles
 
 for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
